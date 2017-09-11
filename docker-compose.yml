@@ -1,0 +1,41 @@
+#
+# syntax: https://docs.docker.com/compose/yml/
+# author: cuongnb14@gmail.com
+#
+
+version: "3"
+
+services:
+
+  logstash:
+      image: cuongnb14/logstash
+      networks:
+          - back-tier
+      volumes:
+          - ./logstash-config/:/conf/
+      command: logstash -f /conf/agent.conf
+      hostname: logstash-agent
+      domainname: container.box
+      # privileged: true
+      # restart: always
+      # stdin_open: true
+      tty: true
+      logging:
+          driver: "json-file"
+          options:
+              max-size: "100M"
+              max-file: "3"
+
+  influxdb:
+    image: influxdb:1.3
+    ports:
+      - "25826:25826/udp"
+    # volumes:
+    #   - ./influxdb-data/:/var/lib/influxdb/
+    #   - ./influxdb-conf/:/etc/influxdb/:ro
+    #   - ./collectd-type/types.db:/usr/share/collectd/types.db
+    networks:
+      - back-tier
+
+networks:
+    back-tier:
