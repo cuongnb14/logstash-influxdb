@@ -17,10 +17,7 @@ services:
       command: logstash -f /conf/agent.conf
       hostname: logstash-agent
       domainname: container.box
-      # privileged: true
-      # restart: always
-      # stdin_open: true
-      tty: true
+      stdin_open: true
       logging:
           driver: "json-file"
           options:
@@ -28,13 +25,9 @@ services:
               max-file: "3"
 
   influxdb:
-    image: influxdb:1.3
-    # ports:
-    #   - "25826:25826/udp"
-    # volumes:
-    #   - ./influxdb-data/:/var/lib/influxdb/
-    #   - ./influxdb-conf/:/etc/influxdb/:ro
-    #   - ./collectd-type/types.db:/usr/share/collectd/types.db
+    image: influxdb:alpine 
+    environment:
+      - INFLUXDB_DB=metrics
     networks:
       - back-tier
 
